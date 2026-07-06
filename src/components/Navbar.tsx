@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate, useLocation } from "react-router";
 import { ShoppingBag, Menu, X, Lock, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { LogoFull } from "./Logo";
@@ -11,18 +11,26 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Only use the transparent/light effect on the home page (hero behind navbar).
+  // On all other pages the navbar is always solid so the logo stays visible.
+  const isHome = location.pathname === "/";
+  const transparent = isHome && !scrolled;
 
   useEffect(() => {
+    // Reset scroll state when changing pages so navbar is always correct
+    setScrolled(window.scrollY > 50);
     const fn = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
-  }, []);
+  }, [location.pathname]);
 
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "bg-[#FAF7F2]/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
+          transparent ? "bg-transparent" : "bg-[#FAF7F2]/97 backdrop-blur-sm shadow-sm"
         }`}
       >
         {/* Announcement bar */}
@@ -33,7 +41,7 @@ export function Navbar() {
         <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" onClick={() => setMenuOpen(false)}>
-            <LogoFull size="md" light={!scrolled} />
+            <LogoFull size="md" light={transparent} />
           </Link>
 
           {/* Desktop links */}
@@ -45,10 +53,10 @@ export function Navbar() {
                 className={({ isActive }) =>
                   `text-sm font-[Lato] tracking-wider uppercase transition-colors relative group ${
                     isActive
-                      ? scrolled ? "text-primary" : "text-accent"
-                      : scrolled
-                      ? "text-muted-foreground hover:text-foreground"
-                      : "text-[#FAF7F2]/80 hover:text-[#FAF7F2]"
+                      ? transparent ? "text-accent" : "text-primary"
+                      : transparent
+                      ? "text-[#FAF7F2]/80 hover:text-[#FAF7F2]"
+                      : "text-muted-foreground hover:text-foreground"
                   }`
                 }
               >
@@ -69,10 +77,10 @@ export function Navbar() {
               className={({ isActive }) =>
                 `text-sm font-[Lato] tracking-wider uppercase transition-colors relative group ${
                   isActive
-                    ? scrolled ? "text-primary" : "text-accent"
-                    : scrolled
-                    ? "text-muted-foreground hover:text-foreground"
-                    : "text-[#FAF7F2]/80 hover:text-[#FAF7F2]"
+                    ? transparent ? "text-accent" : "text-primary"
+                    : transparent
+                    ? "text-[#FAF7F2]/80 hover:text-[#FAF7F2]"
+                    : "text-muted-foreground hover:text-foreground"
                 }`
               }
             >
@@ -102,7 +110,7 @@ export function Navbar() {
                 <button
                   onClick={adminLogout}
                   title="Cerrar sesión"
-                  className={`transition-colors ${scrolled ? "text-muted-foreground hover:text-foreground" : "text-[#FAF7F2]/70 hover:text-[#FAF7F2]"}`}
+                  className={`transition-colors ${transparent ? "text-[#FAF7F2]/70 hover:text-[#FAF7F2]" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -112,7 +120,7 @@ export function Navbar() {
                 onClick={() => navigate("/admin")}
                 title="Panel de administración"
                 className={`hidden md:flex transition-colors ${
-                  scrolled ? "text-muted-foreground hover:text-foreground" : "text-[#FAF7F2]/50 hover:text-[#FAF7F2]/80"
+                  transparent ? "text-[#FAF7F2]/50 hover:text-[#FAF7F2]/80" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Lock className="w-4 h-4" />
@@ -121,7 +129,7 @@ export function Navbar() {
 
             <button
               className="relative transition-colors"
-              style={{ color: scrolled ? undefined : "#FAF7F2" }}
+              style={{ color: transparent ? "#FAF7F2" : undefined }}
               onClick={() => setCartOpen(true)}
             >
               <ShoppingBag className="w-5 h-5" />
@@ -137,8 +145,8 @@ export function Navbar() {
             </button>
 
             <button
-              className="lg:hidden"
-              style={{ color: scrolled ? undefined : "#FAF7F2" }}
+              className="lg:hidden transition-colors"
+              style={{ color: transparent ? "#FAF7F2" : undefined }}
               onClick={() => setMenuOpen(!menuOpen)}
             >
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
