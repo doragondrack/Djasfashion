@@ -58,7 +58,7 @@ export default function Home() {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-accent font-[Lato] tracking-[0.35em] text-xs uppercase mb-5">
-              Nueva Colección 2024
+              Nueva Colección 2026
             </p>
             <h1 className="font-['Playfair_Display'] text-5xl md:text-7xl font-semibold text-[#FAF7F2] leading-[1.1] mb-6">
               Elegancia que
@@ -93,8 +93,8 @@ export default function Home() {
             className="hidden lg:flex flex-col justify-end gap-8 pb-4"
           >
             {[
-              { n: "1,200+", label: "Prendas Vendidas" },
-              { n: "48", label: "Diseños Exclusivos" },
+              { n: "12.000+", label: "Prendas Vendidas" },
+              { n: "10.000+", label: "Diseños Exclusivos" },
               { n: "5,000+", label: "Clientas Felices" },
             ].map((s) => (
               <div key={s.n} className="flex items-center gap-4">
@@ -146,7 +146,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#2C1F14]/60 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8">
               <p className="font-[Lato] text-xs tracking-[0.25em] text-accent uppercase mb-2">
-                Colección Otoño 2024
+                Colección Otoño 2026
               </p>
               <h3 className="font-['Playfair_Display'] text-2xl text-[#FAF7F2] italic">
                 "Diseñada para<br />brillar cada día"
