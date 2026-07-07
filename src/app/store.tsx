@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { INITIAL_PRODUCTS } from "../data/products";
 import type { Product, Category } from "../data/products";
 import { hasSession, startSession, clearSession } from "../lib/auth";
+import { supabase } from "../lib/supabase";
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────
 export interface CartItem extends Product {
@@ -50,7 +51,7 @@ interface StoreCtx {
 
 const Store = createContext<StoreCtx | null>(null);
 
-const RESERVED_KEY = "__djf_reserved";
+
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
@@ -60,14 +61,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
 
   // Persist reservations in localStorage
-  const [reservedIds, setReservedIds] = useState<Set<number>>(() => {
-    try {
-      const raw = localStorage.getItem(RESERVED_KEY);
-      return raw ? new Set<number>(JSON.parse(raw)) : new Set<number>();
-    } catch {
-      return new Set<number>();
+  useEffect(() => {
+
+    async function loadReserved(){
+
+        const {data,error}=await supabase
+            .from("reserved_products")
+            .select("id");
+
+        if(error){
+            console.log(error);
+            return;
+        }
+
+        setReservedIds(new Set(data.map(x=>x.id)));
+
     }
-  });
+
+    loadReserved();
+
+},[]);
 
   useEffect(() => {
     localStorage.setItem(RESERVED_KEY, JSON.stringify([...reservedIds]));
@@ -92,9 +105,25 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Reservations
-  const reserveProducts = useCallback((ids: number[]) => {
-    setReservedIds((prev) => new Set([...prev, ...ids]));
-  }, []);
+  async function reserveProducts(ids:number[]){
+
+    const rows=ids.map(id=>({id}));
+
+    const {error}=await supabase
+        .from("reserved_products")
+        .insert(rows);
+
+    if(error){
+
+        console.log(error);
+
+    }else{
+
+        setReservedIds(prev=>new Set([...prev,...ids]));
+
+    }
+
+}
 
   const releaseProduct = useCallback((id: number) => {
     setReservedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
