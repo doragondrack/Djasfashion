@@ -11,20 +11,20 @@ const VALUES = [
 
 const TEAM = [
   {
-    name: "Diana Jasbleidy",
+    name: "Danivys jaimes cañizares",
     role: "Fundadora & Diseñadora",
     img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=500&fit=crop&auto=format",
   },
-  {
-    name: "Sofía Herrera",
-    role: "Directora Creativa",
-    img: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=500&fit=crop&auto=format",
-  },
-  {
-    name: "Valentina Cruz",
-    role: "Maestra Costurera",
-    img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=500&fit=crop&auto=format",
-  },
+  //{
+   // name: "Sofía Herrera",
+   // role: "Directora Creativa",
+    //img: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=500&fit=crop&auto=format",
+ // },
+  //{
+    //name: "Valentina Cruz",
+    //role: "Maestra Costurera",
+    //img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=500&fit=crop&auto=format",
+  //},
 ];
 
 export default function Nosotros() {
@@ -72,13 +72,13 @@ export default function Nosotros() {
             </h2>
             <div className="space-y-4 font-[Lato] text-muted-foreground leading-relaxed">
               <p>
-                D´JAS Fashion nació en 2018 en el corazón de Bogotá, de las manos de Diana Jasbleidy,
+                D´JAS Fashion nació en 2001 en el corazón de Barranquilla, de las manos de Danivys jaimes,
                 una diseñadora apasionada que soñaba con crear ropa que combinara elegancia, modestia
                 y la identidad de la mujer colombiana.
               </p>
               <p>
                 Comenzó con una máquina de coser heredada de su abuela y un pequeño taller en el barrio
-                La Candelaria. Hoy, D´JAS viste a mujeres en toda Colombia que buscan prendas que las
+                Galan. Hoy, D´JAS viste a mujeres en toda Colombia que buscan prendas que las
                 hagan sentir poderosas, elegantes y auténticas.
               </p>
               <p>
@@ -101,7 +101,7 @@ export default function Nosotros() {
               className="w-full object-cover"
             />
             <div className="absolute -bottom-6 -left-6 bg-accent p-6 hidden md:block">
-              <p className="font-['Playfair_Display'] text-2xl font-semibold">6 años</p>
+              <p className="font-['Playfair_Display'] text-2xl font-semibold">25 años</p>
               <p className="font-[Lato] text-xs tracking-wide uppercase mt-1">vistiendo con elegancia</p>
             </div>
           </motion.div>
