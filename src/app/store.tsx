@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { supabase } from "../lib/supabase";
 import type { ReactNode } from "react";
 import { INITIAL_PRODUCTS } from "../data/products";
 import type { Product, Category } from "../data/products";
 import { hasSession, startSession, clearSession } from "../lib/auth";
+import { supabase } from "../lib/supabase";
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────
 export interface CartItem extends Product {
@@ -51,58 +51,7 @@ interface StoreCtx {
 
 const Store = createContext<StoreCtx | null>(null);
 
-// Supabase reservations
 
-export function StoreProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [activeCategory, setActiveCategory] = useState<Category>("todos");
-  const [isAdmin, setIsAdmin] = useState<boolean>(hasSession);
-  const [cartOpen, setCartOpen] = useState(false);
-
-  // Reservations synchronized with Supabase
-  const [reservedIds,setReservedIds]=useState<Set<number>>(new Set());
-  useEffect(()=>{(async()=>{const {data}=await supabase.from("reserved_products").select("product_id"); if(data)setReservedIds(new Set(data.map((r:any)=>r.product_id)));})(); const ch=supabase.channel("reserved-products").on("postgres_changes",{event:"INSERT",schema:"public",table:"reserved_products"},(p:any)=>setReservedIds(prev=>new Set([...prev,p.new.product_id]))).subscribe(); return ()=>{supabase.removeChannel(ch)};},[]);
-
-// Products
-  products: Product[];
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  addProduct: (p: Omit<Product, "id">) => void;
-  updateProduct: (p: Product) => void;
-  deleteProduct: (id: number) => void;
-
-  // Reservation (inventory control)
-  reservedIds: Set<number>;
-  reserveProducts: (ids: number[]) => void;
-  releaseProduct: (id: number) => void;
-  isReserved: (id: number) => boolean;
-
-  // Cart
-  cartItems: CartItem[];
-  cartCount: number;
-  cartTotal: number;
-  addToCart: (p: Product, color: string) => void;
-  removeFromCart: (id: number, color: string) => void;
-  updateQty: (id: number, color: string, delta: number) => void;
-  clearCart: () => void;
-
-  // Category filter
-  activeCategory: Category;
-  setActiveCategory: (c: Category) => void;
-
-  // Admin session
-  isAdmin: boolean;
-  adminLogin: () => void;
-  adminLogout: () => void;
-
-  // Cart drawer
-  cartOpen: boolean;
-  setCartOpen: (v: boolean) => void;
-}
-
-const Store = createContext<StoreCtx | null>(null);
-
-// Supabase reservations
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
@@ -112,14 +61,64 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
 
   // Persist reservations in localStorage
-  const [reservedIds, setReservedIds] = useState<Set<number>>(() => {
-    try {
-      const raw = localStorage.getItem(RESERVED_KEY);
-      return raw ? new Set<number>(JSON.parse(raw)) : new Set<number>();
-    } catch {
-      return new Set<number>();
+  useEffect(() => {
+
+    async function loadReserved(){
+
+        const {data,error}=await supabase
+            .from("reserved_products")
+            .select("id");
+
+        if(error){
+            console.log(error);
+            return;
+        }
+
+        setReservedIds(new Set(data.map(x=>x.id)));
+
     }
-  });
+
+    loadReserved();
+
+},[]);
+
+useEffect(()=>{
+
+    const channel=supabase
+
+        .channel("products")
+
+        .on(
+            "postgres_changes",
+            {
+                event:"INSERT",
+                schema:"public",
+                table:"reserved_products"
+            },
+            payload=>{
+
+                setReservedIds(prev=>{
+
+                    const next=new Set(prev);
+
+                    next.add(payload.new.id);
+
+                    return next;
+
+                });
+
+            }
+        )
+
+        .subscribe();
+
+    return ()=>{
+
+        supabase.removeChannel(channel);
+
+    };
+
+},[]);
 
   useEffect(() => {
     localStorage.setItem(RESERVED_KEY, JSON.stringify([...reservedIds]));
@@ -144,9 +143,29 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Reservations
-  const reserveProducts = useCallback(async (ids:number[])=>{const {error}=await supabase.from("reserved_products").upsert(ids.map(product_id=>({product_id}))); if(!error)setReservedIds(prev=>new Set([...prev,...ids]));},[]);
+  async function reserveProducts(ids:number[]){
 
-  const releaseProduct = useCallback(async (id:number)=>{await supabase.from("reserved_products").delete().eq("product_id",id); setReservedIds(prev=>{const n=new Set(prev);n.delete(id);return n;});},[]);
+    const rows=ids.map(id=>({id}));
+
+    const {error}=await supabase
+        .from("reserved_products")
+        .insert(rows);
+
+    if(error){
+
+        console.log(error);
+
+    }else{
+
+        setReservedIds(prev=>new Set([...prev,...ids]));
+
+    }
+
+}
+
+  const releaseProduct = useCallback((id: number) => {
+    setReservedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
+  }, []);
 
   const isReserved = useCallback(
     (id: number) => reservedIds.has(id),
