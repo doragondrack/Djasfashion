@@ -82,6 +82,44 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
 },[]);
 
+useEffect(()=>{
+
+    const channel=supabase
+
+        .channel("products")
+
+        .on(
+            "postgres_changes",
+            {
+                event:"INSERT",
+                schema:"public",
+                table:"reserved_products"
+            },
+            payload=>{
+
+                setReservedIds(prev=>{
+
+                    const next=new Set(prev);
+
+                    next.add(payload.new.id);
+
+                    return next;
+
+                });
+
+            }
+        )
+
+        .subscribe();
+
+    return ()=>{
+
+        supabase.removeChannel(channel);
+
+    };
+
+},[]);
+
   useEffect(() => {
     localStorage.setItem(RESERVED_KEY, JSON.stringify([...reservedIds]));
   }, [reservedIds]);
