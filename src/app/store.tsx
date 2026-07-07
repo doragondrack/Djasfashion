@@ -59,6 +59,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [activeCategory, setActiveCategory] = useState<Category>("todos");
   const [isAdmin, setIsAdmin] = useState<boolean>(hasSession);
   const [cartOpen, setCartOpen] = useState(false);
+  const [reservedIds, setReservedIds] = useState<Set<number>>(new Set());
 
   // Persist reservations in localStorage
   useEffect(() => {
@@ -67,14 +68,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
         const {data,error}=await supabase
             .from("reserved_products")
-            .select("id");
+            .select("product_id");
 
         if(error){
             console.log(error);
             return;
         }
 
-        setReservedIds(new Set(data.map(x=>x.id)));
+        setReservedIds(new Set(data.map(x => x.product_id)));
 
     }
 
@@ -101,7 +102,7 @@ useEffect(()=>{
 
                     const next=new Set(prev);
 
-                    next.add(payload.new.id);
+                    next.add(payload.new.product_id);
 
                     return next;
 
@@ -120,9 +121,6 @@ useEffect(()=>{
 
 },[]);
 
-  useEffect(() => {
-    localStorage.setItem(RESERVED_KEY, JSON.stringify([...reservedIds]));
-  }, [reservedIds]);
 
   // Products
   const addProduct = useCallback((data: Omit<Product, "id">) => {
@@ -145,11 +143,11 @@ useEffect(()=>{
   // Reservations
   async function reserveProducts(ids:number[]){
 
-    const rows=ids.map(id=>({id}));
+    const rows = ids.map(product_id => ({ product_id }));
 
     const {error}=await supabase
         .from("reserved_products")
-        .insert(rows);
+        .upsert(rows)
 
     if(error){
 
@@ -163,9 +161,24 @@ useEffect(()=>{
 
 }
 
-  const releaseProduct = useCallback((id: number) => {
-    setReservedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
-  }, []);
+  const releaseProduct = useCallback(async (id:number)=>{
+
+    await supabase
+        .from("reserved_products")
+        .delete()
+        .eq("product_id",id);
+
+    setReservedIds(prev=>{
+
+        const next=new Set(prev);
+
+        next.delete(id);
+
+        return next;
+
+    });
+
+},[]);
 
   const isReserved = useCallback(
     (id: number) => reservedIds.has(id),
