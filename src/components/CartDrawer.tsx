@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, ShoppingBag, Plus, Minus, MessageCircle, AlertTriangle } from "lucide-react";
 import { useStore } from "../app/store";
 
-const WA = "573001234567";
+const WA = "573166499500";
 
 export function CartDrawer() {
   const {

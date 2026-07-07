@@ -87,7 +87,7 @@ useEffect(()=>{
 
     const channel=supabase
 
-        .channel("products")
+        .channel("reserved-products-channel")
 
         .on(
             "postgres_changes",
@@ -162,7 +162,7 @@ useEffect(()=>{
 useEffect(()=>{
 
     const channel=supabase
-        .channel("products")
+        .channel("products-channel")
         .on(
             "postgres_changes",
             {

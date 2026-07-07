@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { Instagram, Facebook, MessageCircle } from "lucide-react";
 import { LogoFull } from "./Logo";
 
-const WA = "573001234567";
+const WA = "573166499500";
 
 export function Footer() {
   return (
