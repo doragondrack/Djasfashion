@@ -54,7 +54,7 @@ const Store = createContext<StoreCtx | null>(null);
 
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category>("todos");
   const [isAdmin, setIsAdmin] = useState<boolean>(hasSession);
@@ -123,22 +123,142 @@ useEffect(()=>{
 
 
   // Products
-  const addProduct = useCallback((data: Omit<Product, "id">) => {
-    setProducts((prev) => {
-      const id = Math.max(0, ...prev.map((p) => p.id)) + 1;
-      return [...prev, { ...data, id }];
-    });
-  }, []);
+  useEffect(() => {
 
-  const updateProduct = useCallback((updated: Product) => {
-    setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
-  }, []);
+    async function loadProducts(){
 
-  const deleteProduct = useCallback((id: number) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-    setCartItems((prev) => prev.filter((i) => i.id !== id));
-    setReservedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
-  }, []);
+        const { data, error } = await supabase
+            .from("products")
+            .select("*")
+            .order("id");
+
+        if(error){
+            console.error(error);
+            return;
+        }
+
+        const items = data.map((p:any)=>({
+
+            id:p.id,
+            name:p.name,
+            category:p.category,
+            price:Number(p.price),
+            originalPrice:p.original_price ?? undefined,
+            image:p.image,
+            tag:p.tag ?? undefined,
+            colors:p.colors,
+            description:p.description
+
+        }));
+
+        setProducts(items);
+
+    }
+
+    loadProducts();
+
+},[]);
+
+useEffect(()=>{
+
+    const channel=supabase
+        .channel("products")
+        .on(
+            "postgres_changes",
+            {
+                event:"*",
+                schema:"public",
+                table:"products"
+            },
+            ()=>{
+
+                supabase
+                    .from("products")
+                    .select("*")
+                    .order("id")
+                    .then(({data})=>{
+
+                        if(!data) return;
+
+                        setProducts(data.map((p:any)=>({
+
+                            id:p.id,
+                            name:p.name,
+                            category:p.category,
+                            price:Number(p.price),
+                            originalPrice:p.original_price ?? undefined,
+                            image:p.image,
+                            tag:p.tag ??undefined,
+                            colors:p.colors,
+                            description:p.description
+
+                        })));
+
+                    });
+
+            }
+        )
+        .subscribe();
+
+    return ()=>{
+
+        supabase.removeChannel(channel);
+
+    };
+
+},[]);
+
+  const addProduct = useCallback(async (product: Omit<Product,"id">)=>{
+
+    const id = Date.now();
+
+    await supabase
+        .from("products")
+        .insert({
+
+            id,
+
+            name:product.name,
+            category:product.category,
+            price:product.price,
+            original_price:product.originalPrice,
+            image:product.image,
+            tag:product.tag,
+            colors:product.colors,
+            description:product.description
+
+        });
+
+},[]);
+
+  const updateProduct = useCallback(async (product:Product)=>{
+
+    await supabase
+        .from("products")
+        .update({
+
+            name:product.name,
+            category:product.category,
+            price:product.price,
+            original_price:product.originalPrice,
+            image:product.image,
+            tag:product.tag,
+            colors:product.colors,
+            description:product.description
+
+        })
+        .eq("id",product.id);
+
+},[]);
+
+  const deleteProduct = useCallback(async (id:number)=>{
+
+    await supabase
+        .from("products")
+        .delete()
+        .eq("id",id);
+
+},[]);
 
   // Reservations
   async function reserveProducts(ids:number[]){
