@@ -43,7 +43,7 @@ export default function Home() {
       <section className="relative min-h-screen flex items-end overflow-hidden">
         <div className="absolute inset-0 bg-[#2C1F14]">
           <img
-            src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&h=1000&fit=crop&auto=format"
+            src="https://lh3.googleusercontent.com/d/1uu_AkefLBoqbiEaJSQtAb6DrDLl1_FlZ"
             alt="D´JAS Fashion — Alta costura femenina"
             className="w-full h-full object-cover opacity-55"
           />
