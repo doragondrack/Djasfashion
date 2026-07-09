@@ -73,7 +73,7 @@ export default function Nosotros() {
             <div className="space-y-4 font-[Lato] text-muted-foreground leading-relaxed">
               <p>
                 D´JAS Fashion nació en 2001 en el corazón de Barranquilla, de las manos de Danivys jaimes,
-                gracias al don de Dios t al desarrollo academico es una diseñadora apasionada que soñaba
+                gracias al don de Dios y al desarrollo academico es una diseñadora apasionada que soñaba
                 con crear ropa que combinara elegancia, modestia y la identidad de la mujer colombiana.
               </p>
               <p>
