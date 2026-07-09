@@ -299,7 +299,7 @@ export default function Home() {
             </h2>
             <p className="font-[Lato] text-muted-foreground leading-relaxed">
               Suscríbete y recibe acceso anticipado a lanzamientos, descuentos exclusivos y consejos
-              de estilo. Como bienvenida, un 10% en tu primera compra.
+              de estilo.
             </p>
           </div>
           <div>

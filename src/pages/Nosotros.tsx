@@ -3,23 +3,23 @@ import { Ruler, Truck, RefreshCw, Scissors } from "lucide-react";
 import { LogoMark } from "../components/Logo";
 
 const VALUES = [
-  { icon: Scissors, title: "Corte Artesanal", desc: "Cada prenda se corta a mano por nuestras artesanas en Bogotá, garantizando precisión y calidad superior en cada costura." },
+  { icon: Scissors, title: "Corte Artesanal", desc: "Cada prenda se corta a mano por nuestras artesanas en Cartagena, garantizando precisión y calidad superior en cada costura." },
   { icon: Ruler, title: "Tallas Inclusivas", desc: "Diseñamos para todas las siluetas. Ofrecemos tallas XS a 3XL y ajustes personalizados sin costo adicional." },
-  { icon: Truck, title: "Envío a Colombia", desc: "Despachos a todo el territorio nacional. Envío gratis en compras mayores a $150 USD. Llegada en 3-5 días hábiles." },
+  { icon: Truck, title: "Envío a Colombia", desc: "Despachos a todo el territorio nacional. Envío gratis en compras mayores a $380.000 COP. Llegada en 3-5 días hábiles." },
   { icon: RefreshCw, title: "Cambios Fáciles", desc: "Si la prenda no es lo que esperabas, te damos 15 días para cambio o devolución. Sin preguntas, sin complicaciones." },
 ];
 
 const TEAM = [
-  {
-    name: "Danivys jaimes cañizares",
-    role: "Fundadora & Diseñadora",
-    img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=500&fit=crop&auto=format",
-  },
   //{
    // name: "Sofía Herrera",
    // role: "Directora Creativa",
     //img: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=500&fit=crop&auto=format",
  // },
+  {
+    name: "Danivys jaimes cañizares",
+    role: "Fundadora & Diseñadora",
+    img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=500&fit=crop&auto=format",
+  },
   //{
     //name: "Valentina Cruz",
     //role: "Maestra Costurera",
@@ -73,11 +73,11 @@ export default function Nosotros() {
             <div className="space-y-4 font-[Lato] text-muted-foreground leading-relaxed">
               <p>
                 D´JAS Fashion nació en 2001 en el corazón de Barranquilla, de las manos de Danivys jaimes,
-                una diseñadora apasionada que soñaba con crear ropa que combinara elegancia, modestia
-                y la identidad de la mujer colombiana.
+                gracias al don de Dios t al desarrollo academico es una diseñadora apasionada que soñaba
+                con crear ropa que combinara elegancia, modestia y la identidad de la mujer colombiana.
               </p>
               <p>
-                Comenzó con una máquina de coser heredada de su abuela y un pequeño taller en el barrio
+                Comenzó con una máquina de coser heredada de su madre y un pequeño taller en el barrio
                 Galan. Hoy, D´JAS viste a mujeres en toda Colombia que buscan prendas que las
                 hagan sentir poderosas, elegantes y auténticas.
               </p>

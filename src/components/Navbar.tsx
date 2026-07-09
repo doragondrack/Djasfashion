@@ -35,7 +35,7 @@ export function Navbar() {
       >
         {/* Announcement bar */}
         <div className="bg-primary text-primary-foreground text-center py-1.5 text-[10px] tracking-[0.25em] font-[Lato] uppercase">
-          Envío gratis en compras mayores a $150 · Telas éticas · Hecho en Colombia
+          Envío gratis en compras mayores a $380.000 COP · Telas éticas · Hecho en Colombia
         </div>
 
         <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
